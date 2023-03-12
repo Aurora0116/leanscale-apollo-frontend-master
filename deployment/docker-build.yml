@@ -1,0 +1,21 @@
+
+
+.build:
+  image: 141903283429.dkr.ecr.me-south-1.amazonaws.com/devops:docker-container
+  services:
+    - docker:19-dind
+    
+  before_script:
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    - docker pull $DOCKER_REGISTRY/apollo/${ENV_NAME}-${APP_NAME}:latest || true
+    - docker build --cache-from $DOCKER_REGISTRY/apollo/${ENV_NAME}-${APP_NAME}:latest -t $DOCKER_REGISTRY/apollo/${ENV_NAME}-${APP_NAME}:latest -t $DOCKER_REGISTRY/apollo/${ENV_NAME}-${APP_NAME}:${IMAGE_TAG} .
+    - docker push $DOCKER_REGISTRY/apollo/${ENV_NAME}-${APP_NAME}:${IMAGE_TAG}  #${CI_PIPELINE_ID}.0.0-${CI_COMMIT_SHORT_SHA}
+    - docker push $DOCKER_REGISTRY/apollo/${ENV_NAME}-${APP_NAME}:latest  #${CI_PIPELINE_ID}.0.0-${CI_COMMIT_SHORT_SHA}
+  cache:
+    key: build-cache
+    paths:
+      - /var/lib/docker/

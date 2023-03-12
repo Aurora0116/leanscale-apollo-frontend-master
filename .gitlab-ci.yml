@@ -1,0 +1,29 @@
+stages: 
+  - lint
+  - build
+  - helm-lint
+  - helm-deploy
+
+
+variables: 
+  DOCKER_REGISTRY: 141903283429.dkr.ecr.me-south-1.amazonaws.com
+  AWS_DEFAULT_REGION: me-south-1
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_TAG: ${CI_PIPELINE_IID}
+  TOKEN_NAME: $CICD_TOKEN_NAME
+  ACCESS_TOKEN: $CICD_ACCESS_TOKEN
+  AWS_REGION: me-south-1
+  BRANCH: $CI_COMMIT_BRANCH
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+
+include: 
+  - local: /deployment/.gitlab-ci.yaml
+  - local: /deployment/.gitlab-ci-alpha.yaml
+    rules:
+      - if: $CI_COMMIT_BRANCH == "development"
+  - local: /deployment/.gitlab-ci-beta.yaml
+    rules:
+      - if: $CI_COMMIT_BRANCH == "beta"

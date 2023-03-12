@@ -1,0 +1,6 @@
+.helm_test:
+  image: 141903283429.dkr.ecr.me-south-1.amazonaws.com/devops:kubectl-awscli-helm-tools
+  script:
+    - git clone https://$TOKEN_NAME:$ACCESS_TOKEN@git.alhabibpharmacy.net/hmg-epharmacy/devops/helm-charts.git
+    - cd helm-charts/${APP_NAME}
+    - helm lint -f ${ENV_NAME}.yaml 

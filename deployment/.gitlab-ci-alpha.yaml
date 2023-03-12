@@ -1,0 +1,44 @@
+include: 
+  - local: /deployment/docker-build.yml
+  - local: /deployment/helm-deploy.yml
+  - local: /deployment/helm-test.yml
+
+variables:
+  ENV_NAME: 'alpha'
+  EKS_CLUSTER_NAME: apollo-nonprod-cluster
+  KUBE_NAMESPACE: alpha
+  APP_NAME: web
+
+build_image_alpha:
+  tags:
+    - nonprod-gitlab-runner
+  stage: build
+  extends: .build
+  only:
+    - development
+
+helm_test_alpha:
+  tags:
+    - nonprod-gitlab-runner
+  extends: .helm_test  
+  stage: helm-lint
+  dependencies:
+    - build_image_alpha
+  needs:
+    - build_image_alpha
+  only:
+    - development
+
+helm_deploy_alpha:
+  tags:
+    - nonprod-gitlab-runner
+  extends: .deploy
+  stage: helm-deploy
+
+  dependencies:
+    - helm_test_alpha
+  needs:
+    - helm_test_alpha
+  only:
+    - development
+

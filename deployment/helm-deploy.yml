@@ -1,0 +1,8 @@
+.deploy:
+  image: 141903283429.dkr.ecr.me-south-1.amazonaws.com/devops:kubectl-awscli-helm-tools
+  script: 
+    - aws eks --region me-south-1 update-kubeconfig --name ${EKS_CLUSTER_NAME}
+    - git clone https://$TOKEN_NAME:$ACCESS_TOKEN@git.alhabibpharmacy.net/hmg-epharmacy/devops/helm-charts.git
+    - cd helm-charts/${APP_NAME}
+    - helm upgrade --install ${ENV_NAME}-${APP_NAME} -f ${ENV_NAME}.yaml -n ${KUBE_NAMESPACE} --set image.tag=${IMAGE_TAG} .
+

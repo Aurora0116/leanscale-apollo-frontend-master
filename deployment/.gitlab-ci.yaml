@@ -1,0 +1,45 @@
+lint:
+  image: node:18-alpine
+  stage: lint
+  before_script:
+    # - npm install -g serve
+  script:
+    - yarn install
+    - npm run lint
+  only:
+    - master
+    - alpha
+    - development
+    - merge_requests
+    - pipe
+    - beta
+    - lint
+
+# sonarqube-check:
+#   image:
+#     name: sonarsource/sonar-scanner-cli:4.6
+#     entrypoint: [""]
+#   stage: lint
+#   variables:
+#     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+#     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+#     PRISMA_CLIENT_OUTPUT: "./client" # Needed for prisma client generation
+#   cache:
+#     key: "${CI_JOB_NAME}"
+#     paths:
+#       - .sonar/cache
+#   script:
+#    # - npm install
+#    # - npm run prisma:generate
+#    # - npm run test:coverage
+#     - sonar-scanner
+#   allow_failure: true
+#   only:
+#     - master
+#     - beta-grubtech
+#     - development
+#     - merge_requests
+#     - pipe
+#     - beta
+
+
